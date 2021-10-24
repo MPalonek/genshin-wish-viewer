@@ -86,22 +86,50 @@ class Database:
 
 class PresetDatabase(Database):
     database_name = "PresetDatabase"
+    # WEAPON 5-STAR:    MORA    WPN_ASC_MAT CMN_ASC_MAT ELT_ASC_MAT
+    # ---1---          10000        5            5           3
+    # ---2---          20000        5           18          12
+    # ---3---          30000        9            9           9
+    # ---4---          45000        5           18          14
+    # ---5---          55000        9           14           9
+    # ---6---          65000        6           27          18
+    # WEAPON 4-STAR:    MORA    WPN_ASC_MAT CMN_ASC_MAT ELT_ASC_MAT
+    # ---1---           5000        3            3           2
+    # ---2---          15000        3           12           8
+    # ---3---          20000        6            6           6
+    # ---4---          30000        3           12           9
+    # ---5---          35000        6            9           6
+    # ---6---          45000        4           18          12
+    ###############################################################
+    # CHAR:             MORA    ASC_GEM BOS_MAT LCL_SPC CMN_ASC_MAT
+    # ---1---          20000        1        0       3       3
+    # ---2---          40000        3        2      10      15
+    # ---3---          60000        6        4      20      12
+    # ---4---          80000        3        8      30      18
+    # ---5---         100000        6       12      45      12
+    # ---6---         120000        6       20      60      24
+    # CHAR TALENT:      MORA    REQ_ASC CMN_ASC_MAT TLN_MAT WKL_BOS_MAT
+    # ---1---          12500        2        6       3          0
+    # ---2---          17500        3        3       2          0
+    # ---3---          25000        3        4       4          0
+    # ---4---          30000        4        6       6          0
+    # ---5---          37500        4        9       9          0
+    # ---6---         120000        5        4       4          1
+    # ---7---         260000        5        6       6          1
+    # ---8---         450000        6        9      12          2
+    # ---9---         700000        6       12      16          2
 
     def create_preset_tables(self):
         logging.info("Creating preset tables")
-        wish_commands = ["CREATE TABLE IF NOT EXISTS wishCharacter (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
-                         " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
-                         "CREATE TABLE IF NOT EXISTS wishNovice (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
-                         " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
-                         "CREATE TABLE IF NOT EXISTS wishPermanent (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
-                         " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
-                         "CREATE TABLE IF NOT EXISTS wishWeapon (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
-                         " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);"]
-        for command in wish_commands:
+        preset_commands = ["CREATE TABLE IF NOT EXISTS Characters ();",
+                           "CREATE TABLE IF NOT EXISTS Weapons ();",
+                           "CREATE TABLE IF NOT EXISTS Materials ();",
+                           "CREATE TABLE IF NOT EXISTS Artifacts ();"]
+        for command in preset_commands:
             self.execute_command(command)
 
     def create_tables(self):
-        """create tables for database (systemInfo, wishCharacter, wishNovice, wishPermanent, wishWeapon)
+        """create tables for database (systemInfo, Characters, Weapons, Materials, Artifacts)
         :return:
         """
         self.create_info_table()
@@ -119,36 +147,20 @@ class PresetDatabase(Database):
         return tables
 
     def get_number_of_elements_in_database(self):
-        count_commands = ["SELECT COUNT(1) from wishCharacter;",
-                          "SELECT COUNT(1) from wishNovice;",
-                          "SELECT COUNT(1) from wishPermanent;",
-                          "SELECT COUNT(1) from wishWeapon;"]
+        count_commands = ["SELECT COUNT(1) from Characters;",
+                          "SELECT COUNT(1) from Weapons;",
+                          "SELECT COUNT(1) from Materials;",
+                          "SELECT COUNT(1) from Artifacts;"]
         count_table = []
         for cmd in count_commands:
             count_table.append(self.connection.execute(cmd).fetchall()[0][0])
         return count_table
 
-    def insert_wish_entry(self, table, wish):
-        try:
-            insert = 'INSERT INTO {}(itemType, itemName, timeReceived, itemRarity) VALUES("{}", "{}", {});'\
-                .format(table, wish[0], wish[1], wish[2])
-            self.connection.execute(insert)
-            self.connection.commit()
-        except Error as e:
-            logging.error('Failed to insert entry. {}'.format(e))
-            self.failed_insert_number = self.failed_insert_number + 1
+    def insert_entry(self, table, wish):
+        pass
 
-    def insert_multiple_wish_entries(self, table, wishes):
-        # TODO looks kinda sussy, review it
-        try:
-            for wish in wishes:
-                insert = 'INSERT INTO {}(itemType, itemName, timeReceived) VALUES("{}", "{}", {});'\
-                    .format(table, wish[0], wish[1], wish[2])
-                self.connection.execute(insert)
-            self.connection.commit()
-        except Error as e:
-            logging.error('Failed to insert entry. {}'.format(e))
-            self.failed_insert_number = self.failed_insert_number + 1
+    def insert_multiple_entries(self, table, wishes):
+        pass
 
 
 class WishDatabase(Database):

@@ -4,7 +4,9 @@ from datetime import date
 import os
 from database import WishDatabase
 from importer import WishImporter
-
+from ui import MainWindow
+from PyQt5.QtWidgets import QApplication
+import sys
 # potential UI - https://github.com/Wanderson-Magalhaes/Simple_PySide_Base/blob/master/main.py
 
 
@@ -33,6 +35,14 @@ def init_logger(debug):
 def main():
     args = parse_arguments()
     init_logger(args.debug)
+
+    app = QApplication(sys.argv)
+    app.setStyle('Fusion')
+    window = MainWindow()
+    window.setup_ui()
+    window.show()
+    app.exec()
+
 
     db = WishDatabase("db.db")
     db.initialize_database()
