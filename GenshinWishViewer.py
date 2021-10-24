@@ -4,7 +4,6 @@ from datetime import date
 import os
 from database import WishDatabase
 from importer import WishImporter
-
 # potential UI - https://github.com/Wanderson-Magalhaes/Simple_PySide_Base/blob/master/main.py
 
 
