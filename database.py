@@ -86,14 +86,14 @@ class Database:
 
 class PresetDatabase(Database):
     database_name = "PresetDatabase"
-    # WEAPON 5-STAR:    MORA    WPN_ASC_MAT CMN_ASC_MAT ELT_ASC_MAT
+    # WEAPON 5-STAR:    MORA    WPN_ASC_MAT ELT_ASC_MAT CMN_ASC_MAT
     # ---1---          10000        5            5           3
     # ---2---          20000        5           18          12
     # ---3---          30000        9            9           9
     # ---4---          45000        5           18          14
     # ---5---          55000        9           14           9
     # ---6---          65000        6           27          18
-    # WEAPON 4-STAR:    MORA    WPN_ASC_MAT CMN_ASC_MAT ELT_ASC_MAT
+    # WEAPON 4-STAR:    MORA    WPN_ASC_MAT ELT_ASC_MAT CMN_ASC_MAT
     # ---1---           5000        3            3           2
     # ---2---          15000        3           12           8
     # ---3---          20000        6            6           6
