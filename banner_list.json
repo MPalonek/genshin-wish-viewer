@@ -43,7 +43,9 @@
     {"id": "19", "name": "Drifting Luminescence", "start": "2021-09-21", "end": "2021-10-12",
       "rate_up": [{"name": "Kokomi"}, {"name": "Rosaria"}, {"name": "Beidou"}, {"name": "Xingqiu"}]},
     {"id": "20", "name": "Farewell of Snezhnaya", "start": "2021-10-13", "end": "2021-11-02",
-      "rate_up": [{"name": "Tartaglia"}, {"name": "Ningguang"}, {"name": "Chongyun"}, {"name": "Yanfei"}]}
+      "rate_up": [{"name": "Tartaglia"}, {"name": "Ningguang"}, {"name": "Chongyun"}, {"name": "Yanfei"}]},
+    {"id": "21", "name": "Moment of Bloom", "start": "2021-11-02", "end": "2021-11-23",
+      "rate_up": [{"name": "Hu Tao"}, {"name": "Thoma"}, {"name": "Sayu"}, {"name": "Diona"}]}
   ],
   "Standard Wish": [
     {"id": "01", "name": "Wanderlust Invocation", "start": "2020-09-28", "end": "Indefinite",
@@ -125,6 +127,10 @@
     {"id": "19", "name": "Epitome Invocation", "start": "2021-10-13", "end": "2021-11-02",
       "rate_up": [{"name": "Polar Star"}, {"name": "Memory of Dust"},
         {"name": "Akuoumaru"}, {"name": "Favonius Sword"},
-        {"name": "Favonius Lance"}, {"name": "Eye of Perception"}, {"name": "Rust"}]}
+        {"name": "Favonius Lance"}, {"name": "Eye of Perception"}, {"name": "Rust"}]},
+    {"id": "20", "name": "Epitome Invocation", "start": "2021-11-02", "end": "2021-11-23",
+      "rate_up": [{"name": "Staff of Homa"}, {"name": "Elegy for the End"},
+        {"name": "Mouun's Moon"}, {"name": "The Widsith"},
+        {"name": "Wavebreaker's Fin"}, {"name": "Rainslasher"}, {"name": "Sacrificial Sword"}]}
   ]
 }
