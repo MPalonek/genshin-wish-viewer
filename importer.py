@@ -87,8 +87,21 @@ class WishImporter:
     #     return text
 
     def import_from_dir(self, dir_path, table_name):
-        # TODO verify that table_name is correct
+        if table_name not in ["wishCharacter", "wishWeapon", "wishStandard", "wishBeginner"]:
+            logging.error("Wrong table name!")
+            return
         img_paths = self.get_image_paths_from_dir_path(dir_path)
+        for img_path in img_paths:
+            wishes = self.get_wishes_from_image(img_path)
+            if not self.check_if_wishes_are_already_in_db(wishes):
+                self.insert_to_db(wishes, table_name)
+            else:
+                logging.info("Wishes: {} are already in db!".format(wishes))
+
+    def import_from_list_of_image_paths(self, img_paths, table_name):
+        if table_name not in ["wishCharacter", "wishWeapon", "wishStandard", "wishBeginner"]:
+            logging.error("Wrong table name!")
+            return
         for img_path in img_paths:
             wishes = self.get_wishes_from_image(img_path)
             if not self.check_if_wishes_are_already_in_db(wishes):
