@@ -167,20 +167,20 @@ class WishDatabase(Database):
     database_name = "WishDatabase"
 
     def create_wish_tables(self):
-        logging.info("Creating preset tables")
+        logging.info("Creating wish tables")
         wish_commands = ["CREATE TABLE IF NOT EXISTS wishCharacter (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
                          " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
-                         "CREATE TABLE IF NOT EXISTS wishNovice (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
-                         " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
-                         "CREATE TABLE IF NOT EXISTS wishPermanent (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
-                         " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
                          "CREATE TABLE IF NOT EXISTS wishWeapon (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
+                         " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
+                         "CREATE TABLE IF NOT EXISTS wishStandard (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
+                         " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
+                         "CREATE TABLE IF NOT EXISTS wishBeginner (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
                          " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);"]
         for command in wish_commands:
             self.execute_command(command)
 
     def create_tables(self):
-        """create tables for database (systemInfo, wishCharacter, wishNovice, wishPermanent, wishWeapon)
+        """create tables for database (systemInfo, wishCharacter, wishWeapon, wishStandard, wishBeginner)
         :return:
         """
         self.create_info_table()
@@ -199,9 +199,9 @@ class WishDatabase(Database):
 
     def get_number_of_elements_in_database(self):
         count_commands = ["SELECT COUNT(1) from wishCharacter;",
-                          "SELECT COUNT(1) from wishNovice;",
-                          "SELECT COUNT(1) from wishPermanent;",
-                          "SELECT COUNT(1) from wishWeapon;"]
+                          "SELECT COUNT(1) from wishWeapon;",
+                          "SELECT COUNT(1) from wishStandard;",
+                          "SELECT COUNT(1) from wishBeginner;"]
         count_table = []
         for cmd in count_commands:
             count_table.append(self.connection.execute(cmd).fetchall()[0][0])
@@ -209,7 +209,7 @@ class WishDatabase(Database):
 
     def get_wishes_from_table(self, table_name):
         try:
-            select = 'SELECT itemType, itemName, timeReceived, itemRarity FROM {};'.format(table_name)
+            select = 'SELECT itemType, itemName, timeReceived, itemRarity FROM {} ORDER BY timeReceived ASC, id ASC;'.format(table_name)
             return self.connection.execute(select).fetchall()
         except Error as e:
             logging.error('Failed to select entries. {}'.format(e))
