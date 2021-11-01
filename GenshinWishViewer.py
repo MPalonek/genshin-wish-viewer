@@ -190,32 +190,34 @@ class Ui(QtWidgets.QMainWindow):
     def update_wish_ui(self):
         # TODO dont update ui, if it wasn't changed
         self.characterBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishCharacter'])))  # lifetime pulls
-        self.characterBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishCharacter']) * 160))  # primo
+        self.characterBannerLabel_2_1_2.setText("{:,}".format(len(self.wish_entries['wishCharacter']) * 160).replace(',', ' '))  # primo
         self.characterBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishCharacter'], 5)))  # 5* pity
         self.characterBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishCharacter'], 4)))  # 4* pity
 
         self.weaponBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishWeapon'])))  # lifetime pulls
-        self.weaponBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishWeapon']) * 160))  # primo
+        self.weaponBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishWeapon']) * 160).replace(',', ' '))  # primo
         self.weaponBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishWeapon'], 5)))  # 5* pity
         self.weaponBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishWeapon'], 4)))  # 4* pity
 
         self.standardBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishStandard'])))  # lifetime pulls
-        self.standardBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishStandard']) * 160))  # primo
+        self.standardBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishStandard']) * 160).replace(',', ' '))  # primo
         self.standardBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishStandard'], 5)))  # 5* pity
         self.standardBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishStandard'], 4)))  # 4* pity
 
         self.beginnerBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishBeginner'])))  # lifetime pulls
-        self.beginnerBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishBeginner']) * 160))  # primo
+        self.beginnerBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishBeginner']) * 160).replace(',', ' '))  # primo
         self.beginnerBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishBeginner'], 5)))  # 5* pity
         self.beginnerBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishBeginner'], 4)))  # 4* pity
 
-    def get_pity_number(self, wish_list, sought_val):
+    def get_pity_number(self, wish_list, rarity):
         # if wish_list is empty
         if not wish_list:
             return 0
         for idx, wish in enumerate(reversed(wish_list)):
-            if wish[3] == sought_val:
+            if wish[3] == rarity:
                 return idx
+        # there are entries, but none with sought rarity
+        return len(wish_list)
 
 
     def set_dark_mode_theme(self):
