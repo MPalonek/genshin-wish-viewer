@@ -1177,8 +1177,9 @@ QPushButton:pressed {
                     </font>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">QLabel{
-color : gold; }</string>
+                    <string notr="true">QLabel {
+	color : rgb(255, 215, 0);
+}</string>
                    </property>
                    <property name="text">
                     <string>0</string>
@@ -1272,8 +1273,9 @@ color : gold; }</string>
                     </font>
                    </property>
                    <property name="styleSheet">
-                    <string notr="true">QLabel{
-color : violet; }</string>
+                    <string notr="true">QLabel {
+	color : rgb(238, 130, 238);
+}</string>
                    </property>
                    <property name="text">
                     <string>0</string>
@@ -1459,10 +1461,6 @@ QPushButton:checked {
 	border-radius: 0px;
 	background-color: transparent;
 }
-QTableWidget::item {
-	border-top: 1px solid rgb(130, 130, 130);
-	color: white;
-}
 QHeaderView::section {
 	color: white;
 	background-color: transparent;
@@ -1550,6 +1548,11 @@ QTableCornerButton::section {
                  </property>
                  <property name="textAlignment">
                   <set>AlignTrailing|AlignVCenter</set>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>id</string>
                  </property>
                 </column>
                </widget>
@@ -2249,10 +2252,6 @@ QPushButton:checked {
 	border-radius: 0px;
 	background-color: transparent;
 }
-QTableWidget::item {
-	border-top: 1px solid rgb(130, 130, 130);
-	color: white;
-}
 QHeaderView::section {
 	color: white;
 	background-color: transparent;
@@ -2340,6 +2339,11 @@ QTableCornerButton::section {
                  </property>
                  <property name="textAlignment">
                   <set>AlignTrailing|AlignVCenter</set>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>id</string>
                  </property>
                 </column>
                </widget>
@@ -3039,10 +3043,6 @@ QPushButton:checked {
 	border-radius: 0px;
 	background-color: transparent;
 }
-QTableWidget::item {
-	border-top: 1px solid rgb(130, 130, 130);
-	color: white;
-}
 QHeaderView::section {
 	color: white;
 	background-color: transparent;
@@ -3130,6 +3130,11 @@ QTableCornerButton::section {
                  </property>
                  <property name="textAlignment">
                   <set>AlignTrailing|AlignVCenter</set>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>id</string>
                  </property>
                 </column>
                </widget>
@@ -3829,10 +3834,6 @@ QPushButton:checked {
 	border-radius: 0px;
 	background-color: transparent;
 }
-QTableWidget::item {
-	border-top: 1px solid rgb(130, 130, 130);
-	color: white;
-}
 QHeaderView::section {
 	color: white;
 	background-color: transparent;
@@ -3920,6 +3921,11 @@ QTableCornerButton::section {
                  </property>
                  <property name="textAlignment">
                   <set>AlignTrailing|AlignVCenter</set>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>id</string>
                  </property>
                 </column>
                </widget>

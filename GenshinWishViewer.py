@@ -7,9 +7,9 @@ from ImportWishWindow import ImportWishDialog
 from importer import WishImporter
 import time
 from PyQt5 import QtWidgets, uic
-from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap, QBitmap, QPainter
+from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap, QBitmap, QPainter, QBrush
 from PyQt5.QtCore import Qt, QSize, QEvent, QTimer, QRect, QMetaObject, QPoint
-from PyQt5.QtWidgets import QApplication, QPushButton, QFrame, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QSizeGrip, QPushButton, QLabel
+from PyQt5.QtWidgets import QApplication, QPushButton, QFrame, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QSizeGrip, QPushButton, QLabel, QTableWidgetItem
 import sys
 # potential UI - https://github.com/Wanderson-Magalhaes/Simple_PySide_Base/blob/master/main.py
 
@@ -69,19 +69,60 @@ class Ui(QtWidgets.QMainWindow):
         self.maximizeRestoreButton.setIcon(QIcon("icons/maximize_white.png"))
         self.closeButton.setIcon(QIcon("icons/exit_white.png"))
 
+        # ----------SETTING TABLES----------
         self.characterBannerTableWidget.setColumnWidth(0, 120)  # was 130 without scrollbar
-        self.characterBannerTableWidget.setColumnWidth(1, 118)
+        self.characterBannerTableWidget.setColumnWidth(1, 118)  # 118
         self.characterBannerTableWidget.setColumnWidth(2, 30)
-        self.characterBannerTableWidget.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Fixed)
-        self.characterBannerTableWidget.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Fixed)
-        self.characterBannerTableWidget.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Fixed)
-
+        self.characterBannerTableWidget.setColumnHidden(3, True)
+        for i in range(3):
+            self.characterBannerTableWidget.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
         self.characterBannerTableWidget.verticalScrollBar().setStyleSheet("QScrollBar:vertical { border: none; background: rgb(75, 75, 75); width: 5px; margin: 5 0 0 0; border-radius: 2px; }"
                                                                           "QScrollBar::handle:vertical { background-color:  rgb(130, 130, 130); min-height: 30px; border-radius: 2px; }"
                                                                           "QScrollBar::handle:vertical:hover { background-color: rgb(200, 200, 200); }"
                                                                           "QScrollBar::handle:vertical:pressed { background-color: rgb(255, 255, 255); }" 
                                                                           "QScrollBar::sub-page:vertical, QScrollBar::sub-line:vertical, QScrollBar::add-page:vertical, QScrollBar::add-line:vertical { background: none; }"
                                                                           )
+
+        self.weaponBannerTableWidget.setColumnWidth(0, 120)  # was 130 without scrollbar
+        self.weaponBannerTableWidget.setColumnWidth(1, 118)  # 118
+        self.weaponBannerTableWidget.setColumnWidth(2, 30)
+        self.weaponBannerTableWidget.setColumnHidden(3, True)
+        for i in range(3):
+            self.weaponBannerTableWidget.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
+        self.weaponBannerTableWidget.verticalScrollBar().setStyleSheet("QScrollBar:vertical { border: none; background: rgb(75, 75, 75); width: 5px; margin: 5 0 0 0; border-radius: 2px; }"
+                                                                          "QScrollBar::handle:vertical { background-color:  rgb(130, 130, 130); min-height: 30px; border-radius: 2px; }"
+                                                                          "QScrollBar::handle:vertical:hover { background-color: rgb(200, 200, 200); }"
+                                                                          "QScrollBar::handle:vertical:pressed { background-color: rgb(255, 255, 255); }" 
+                                                                          "QScrollBar::sub-page:vertical, QScrollBar::sub-line:vertical, QScrollBar::add-page:vertical, QScrollBar::add-line:vertical { background: none; }"
+                                                                          )
+
+        self.standardBannerTableWidget.setColumnWidth(0, 120)  # was 130 without scrollbar
+        self.standardBannerTableWidget.setColumnWidth(1, 118)  # 118
+        self.standardBannerTableWidget.setColumnWidth(2, 30)
+        self.standardBannerTableWidget.setColumnHidden(3, True)
+        for i in range(3):
+            self.standardBannerTableWidget.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
+        self.standardBannerTableWidget.verticalScrollBar().setStyleSheet("QScrollBar:vertical { border: none; background: rgb(75, 75, 75); width: 5px; margin: 5 0 0 0; border-radius: 2px; }"
+                                                                          "QScrollBar::handle:vertical { background-color:  rgb(130, 130, 130); min-height: 30px; border-radius: 2px; }"
+                                                                          "QScrollBar::handle:vertical:hover { background-color: rgb(200, 200, 200); }"
+                                                                          "QScrollBar::handle:vertical:pressed { background-color: rgb(255, 255, 255); }" 
+                                                                          "QScrollBar::sub-page:vertical, QScrollBar::sub-line:vertical, QScrollBar::add-page:vertical, QScrollBar::add-line:vertical { background: none; }"
+                                                                          )
+
+        self.beginnerBannerTableWidget.setColumnWidth(0, 120)  # was 130 without scrollbar
+        self.beginnerBannerTableWidget.setColumnWidth(1, 118)  # 118
+        self.beginnerBannerTableWidget.setColumnWidth(2, 30)
+        self.beginnerBannerTableWidget.setColumnHidden(3, True)
+        for i in range(3):
+            self.beginnerBannerTableWidget.horizontalHeader().setSectionResizeMode(i, QtWidgets.QHeaderView.Fixed)
+        self.beginnerBannerTableWidget.verticalScrollBar().setStyleSheet("QScrollBar:vertical { border: none; background: rgb(75, 75, 75); width: 5px; margin: 5 0 0 0; border-radius: 2px; }"
+                                                                          "QScrollBar::handle:vertical { background-color:  rgb(130, 130, 130); min-height: 30px; border-radius: 2px; }"
+                                                                          "QScrollBar::handle:vertical:hover { background-color: rgb(200, 200, 200); }"
+                                                                          "QScrollBar::handle:vertical:pressed { background-color: rgb(255, 255, 255); }" 
+                                                                          "QScrollBar::sub-page:vertical, QScrollBar::sub-line:vertical, QScrollBar::add-page:vertical, QScrollBar::add-line:vertical { background: none; }"
+                                                                          )
+        # ----------DONE WITH SETTING TABLES----------
+
         self.menuBarVLayout.setAlignment(Qt.AlignTop)
 
         self.characterBannerTableButton.clicked.connect(self.on_click_character_banner_table_button)
@@ -92,6 +133,18 @@ class Ui(QtWidgets.QMainWindow):
         self.standardBannerAddButton.clicked.connect(lambda: self.on_click_banner_add_button("wishStandard"))
         self.beginnerBannerTableButton.clicked.connect(self.on_click_beginner_banner_table_button)
         self.beginnerBannerAddButton.clicked.connect(lambda: self.on_click_banner_add_button("wishBeginner"))
+
+        self.characterBannerFiveStarButton.clicked.connect(self.update_character_wish_table)
+        self.characterBannerFourStarButton.clicked.connect(self.update_character_wish_table)
+
+        self.weaponBannerFiveStarButton.clicked.connect(self.update_weapon_wish_table)
+        self.weaponBannerFourStarButton.clicked.connect(self.update_weapon_wish_table)
+
+        self.standardBannerFiveStarButton.clicked.connect(self.update_standard_wish_table)
+        self.standardBannerFourStarButton.clicked.connect(self.update_standard_wish_table)
+
+        self.beginnerBannerFiveStarButton.clicked.connect(self.update_beginner_wish_table)
+        self.beginnerBannerFourStarButton.clicked.connect(self.update_beginner_wish_table)
 
         self.load_wishes_to_memory()
         self.update_wish_ui()
@@ -159,16 +212,165 @@ class Ui(QtWidgets.QMainWindow):
             self.beginnerBannerFrame_Bottom.updateGeometry()
             self.beginnerBannerFrame.adjustSize()
 
-    def update_wish_table(self):
-        if self.characterBannerFiveStarButton.checked:
-            # insert entries from memory to table
-            pass
-        else:
-            # remove certain entries from tables
-            pass
+    def update_character_wish_table(self):
+        # TODO rethink how to implement this
+        # clear table and sort by id
+        self.characterBannerTableWidget.setRowCount(0)
+        self.characterBannerTableWidget.sortItems(3, Qt.AscendingOrder)
 
-    def on_click_character_banner_four_star_button(self):
-        pass
+        if self.characterBannerFiveStarButton.isChecked():
+            pity_number_5_star = 0
+            for wish in self.wish_entries['wishCharacter']:
+                pity_number_5_star = pity_number_5_star + 1
+                if wish[3] == 5:
+                    self.characterBannerTableWidget.insertRow(self.characterBannerTableWidget.rowCount())
+
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_5_star)))  # pity
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.characterBannerTableWidget.rowCount() - 1)))  # id
+
+                    # color item to gold
+                    for column in range(3):
+                        self.characterBannerTableWidget.item(self.characterBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(255, 215, 0)))
+                    pity_number_5_star = 0
+
+        if self.characterBannerFourStarButton.isChecked():
+            pity_number_4_star = 0
+            for wish in self.wish_entries['wishCharacter']:
+                pity_number_4_star = pity_number_4_star + 1
+                if wish[3] == 4:
+                    self.characterBannerTableWidget.insertRow(self.characterBannerTableWidget.rowCount())
+
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_4_star)))  # pity
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.characterBannerTableWidget.rowCount() - 1)))  # id
+
+                    # color item to violet
+                    for column in range(3):
+                        self.characterBannerTableWidget.item(self.characterBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(238, 130, 238)))
+                    pity_number_4_star = 0
+
+    def update_weapon_wish_table(self):
+        # TODO rethink how to implement this
+        # clear table and sort by id
+        self.weaponBannerTableWidget.setRowCount(0)
+        self.weaponBannerTableWidget.sortItems(3, Qt.AscendingOrder)
+
+        if self.weaponBannerFiveStarButton.isChecked():
+            pity_number_5_star = 0
+            for wish in self.wish_entries['wishWeapon']:
+                pity_number_5_star = pity_number_5_star + 1
+                if wish[3] == 5:
+                    self.weaponBannerTableWidget.insertRow(self.weaponBannerTableWidget.rowCount())
+
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_5_star)))  # pity
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.weaponBannerTableWidget.rowCount() - 1)))  # id
+
+                    # color item to gold
+                    for column in range(3):
+                        self.weaponBannerTableWidget.item(self.weaponBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(255, 215, 0)))
+                    pity_number_5_star = 0
+
+        if self.weaponBannerFourStarButton.isChecked():
+            pity_number_4_star = 0
+            for wish in self.wish_entries['wishWeapon']:
+                pity_number_4_star = pity_number_4_star + 1
+                if wish[3] == 4:
+                    self.weaponBannerTableWidget.insertRow(self.weaponBannerTableWidget.rowCount())
+
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_4_star)))  # pity
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.weaponBannerTableWidget.rowCount() - 1)))  # id
+
+                    # color item to violet
+                    for column in range(3):
+                        self.weaponBannerTableWidget.item(self.weaponBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(238, 130, 238)))
+                    pity_number_4_star = 0
+
+    def update_standard_wish_table(self):
+        # TODO rethink how to implement this
+        # clear table and sort by id
+        self.standardBannerTableWidget.setRowCount(0)
+        self.standardBannerTableWidget.sortItems(3, Qt.AscendingOrder)
+
+        if self.standardBannerFiveStarButton.isChecked():
+            pity_number_5_star = 0
+            for wish in self.wish_entries['wishStandard']:
+                pity_number_5_star = pity_number_5_star + 1
+                if wish[3] == 5:
+                    self.standardBannerTableWidget.insertRow(self.standardBannerTableWidget.rowCount())
+
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_5_star)))  # pity
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.standardBannerTableWidget.rowCount() - 1)))  # id
+
+                    # color item to gold
+                    for column in range(3):
+                        self.standardBannerTableWidget.item(self.standardBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(255, 215, 0)))
+                    pity_number_5_star = 0
+
+        if self.standardBannerFourStarButton.isChecked():
+            pity_number_4_star = 0
+            for wish in self.wish_entries['wishStandard']:
+                pity_number_4_star = pity_number_4_star + 1
+                if wish[3] == 4:
+                    self.standardBannerTableWidget.insertRow(self.standardBannerTableWidget.rowCount())
+
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_4_star)))  # pity
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.standardBannerTableWidget.rowCount() - 1)))  # id
+
+                    # color item to violet
+                    for column in range(3):
+                        self.standardBannerTableWidget.item(self.standardBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(238, 130, 238)))
+                    pity_number_4_star = 0
+
+    def update_beginner_wish_table(self):
+        # TODO rethink how to implement this
+        # clear table and sort by id
+        self.beginnerBannerTableWidget.setRowCount(0)
+        self.beginnerBannerTableWidget.sortItems(3, Qt.AscendingOrder)
+
+        if self.beginnerBannerFiveStarButton.isChecked():
+            pity_number_5_star = 0
+            for wish in self.wish_entries['wishBeginner']:
+                pity_number_5_star = pity_number_5_star + 1
+                if wish[3] == 5:
+                    self.beginnerBannerTableWidget.insertRow(self.beginnerBannerTableWidget.rowCount())
+
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_5_star)))  # pity
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.beginnerBannerTableWidget.rowCount() - 1)))  # id
+
+                    # color item to gold
+                    for column in range(3):
+                        self.beginnerBannerTableWidget.item(self.beginnerBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(255, 215, 0)))
+                    pity_number_5_star = 0
+
+        if self.beginnerBannerFourStarButton.isChecked():
+            pity_number_4_star = 0
+            for wish in self.wish_entries['wishBeginner']:
+                pity_number_4_star = pity_number_4_star + 1
+                if wish[3] == 4:
+                    self.beginnerBannerTableWidget.insertRow(self.beginnerBannerTableWidget.rowCount())
+
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_4_star)))  # pity
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.beginnerBannerTableWidget.rowCount() - 1)))  # id
+
+                    # color item to violet
+                    for column in range(3):
+                        self.beginnerBannerTableWidget.item(self.beginnerBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(238, 130, 238)))
+                    pity_number_4_star = 0
 
     def on_click_banner_add_button(self, banner_type):
         dialog = ImportWishDialog(banner_type)
@@ -195,17 +397,17 @@ class Ui(QtWidgets.QMainWindow):
         self.characterBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishCharacter'], 4)))  # 4* pity
 
         self.weaponBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishWeapon'])))  # lifetime pulls
-        self.weaponBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishWeapon']) * 160).replace(',', ' '))  # primo
+        self.weaponBannerLabel_2_1_2.setText("{:,}".format(len(self.wish_entries['wishWeapon']) * 160).replace(',', ' '))  # primo
         self.weaponBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishWeapon'], 5)))  # 5* pity
         self.weaponBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishWeapon'], 4)))  # 4* pity
 
         self.standardBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishStandard'])))  # lifetime pulls
-        self.standardBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishStandard']) * 160).replace(',', ' '))  # primo
+        self.standardBannerLabel_2_1_2.setText("{:,}".format(len(self.wish_entries['wishStandard']) * 160).replace(',', ' '))  # primo
         self.standardBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishStandard'], 5)))  # 5* pity
         self.standardBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishStandard'], 4)))  # 4* pity
 
         self.beginnerBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishBeginner'])))  # lifetime pulls
-        self.beginnerBannerLabel_2_1_2.setText("{}".format(len(self.wish_entries['wishBeginner']) * 160).replace(',', ' '))  # primo
+        self.beginnerBannerLabel_2_1_2.setText("{:,}".format(len(self.wish_entries['wishBeginner']) * 160).replace(',', ' '))  # primo
         self.beginnerBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishBeginner'], 5)))  # 5* pity
         self.beginnerBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishBeginner'], 4)))  # 4* pity
 
