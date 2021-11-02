@@ -25,7 +25,7 @@ class ImportWishDialog(QDialog):
         self.setup_ui_logic()
 
     def setup_ui(self):
-        # self.setMinimumSize(300, 300)
+        self.setMinimumSize(250, 250)
         # self.setMaximumSize(300, 300)
         # self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setWindowTitle("Adding {}...".format(self.banner_type))
@@ -86,7 +86,7 @@ class ImportWishDialog(QDialog):
         description_label = QLabel()
         description_label.setWordWrap(True)
         description_label.setText(
-            "Lorem ipsium dolores bolores. In the following example, WindowModality attribute of Dialog window decides whether it is modal or modeless. Any one button on the dialog can be set to be default. The dialog is discarded by QDialog.reject() method when the user presses the Escape key.")
+            "Please screenshot your wish history in Genshin Impact.\nSelect one or multiple images and click Accept to add them to database.")
         content_layout.addWidget(description_label)
 
         self.number_label = QLabel()
