@@ -4,6 +4,7 @@ from datetime import date
 import os
 from database import WishDatabase
 from ImportWishWindow import ImportWishDialog
+from SideGrip import SideGrip
 from importer import WishImporter
 import time
 from PyQt5 import QtWidgets, uic
@@ -46,6 +47,12 @@ class Ui(QtWidgets.QMainWindow):
         "wishBeginner": []
     }
 
+    sideGrips = None
+    cornerGrips = None
+    _gripSize = 2
+    maximized = False
+    drag_pos = None
+
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('mainwindow.ui', self)
@@ -62,7 +69,9 @@ class Ui(QtWidgets.QMainWindow):
         self.titleLabel.setText("Genshin Wish Viewer")
         self.iconLabel.setPixmap(QPixmap("icons/wish_icon_white_blur.png").scaled(20, 20, Qt.KeepAspectRatio))
         self.resize(1326, 556)
-        # self.setWindowFlags(Qt.FramelessWindowHint)
+
+        self.make_window_frameless()
+
         # self.set_dark_mode_theme()
 
         self.minimizeButton.setIcon(QIcon("icons/minimize_white.png"))
@@ -125,6 +134,10 @@ class Ui(QtWidgets.QMainWindow):
 
         self.menuBarVLayout.setAlignment(Qt.AlignTop)
 
+        self.minimizeButton.clicked.connect(self.showMinimized)
+        self.maximizeRestoreButton.clicked.connect(self.maximize_restore)
+        self.closeButton.clicked.connect(self.on_click_close_button)
+
         self.characterBannerTableButton.clicked.connect(self.on_click_character_banner_table_button)
         self.characterBannerAddButton.clicked.connect(lambda: self.on_click_banner_add_button("wishCharacter"))
         self.weaponBannerTableButton.clicked.connect(self.on_click_weapon_banner_table_button)
@@ -148,6 +161,9 @@ class Ui(QtWidgets.QMainWindow):
 
         self.load_wishes_to_memory()
         self.update_wish_ui()
+
+    def on_click_close_button(self):
+        self.close()
 
     def on_click_character_banner_table_button(self):
         if self.characterBannerTableButton.text() == "^":
@@ -214,6 +230,7 @@ class Ui(QtWidgets.QMainWindow):
 
     def update_character_wish_table(self):
         # TODO rethink how to implement this
+        # maybe add hidden column with rarity and remove from end?
         # clear table and sort by id
         self.characterBannerTableWidget.setRowCount(0)
         self.characterBannerTableWidget.sortItems(3, Qt.AscendingOrder)
@@ -421,6 +438,103 @@ class Ui(QtWidgets.QMainWindow):
         # there are entries, but none with sought rarity
         return len(wish_list)
 
+    def make_window_frameless(self):
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        self.sideGrips = [
+            SideGrip(self, Qt.LeftEdge),
+            SideGrip(self, Qt.TopEdge),
+            SideGrip(self, Qt.RightEdge),
+            SideGrip(self, Qt.BottomEdge),
+        ]
+        # corner grips should be "on top" of everything, otherwise the side grips
+        # will take precedence on mouse events, so we are adding them *after*;
+        # alternatively, widget.raise_() can be used
+        self.cornerGrips = [QSizeGrip(self) for i in range(4)]
+
+        self.titleBarFrame_1.mouseDoubleClickEvent = self.double_click_to_maximize
+        self.titleBarFrame_1.mousePressEvent = self.press_window
+        self.titleBarFrame_1.mouseMoveEvent = self.move_window
+
+    @property
+    def gripSize(self):
+        return self._gripSize
+
+    def setGripSize(self, size):
+        if size == self._gripSize:
+            return
+        self._gripSize = max(2, size)
+        self.updateGrips()
+
+    def updateGrips(self):
+        self.setContentsMargins(*[self.gripSize] * 4)
+
+        outRect = self.rect()
+        # an "inner" rect used for reference to set the geometries of size grips
+        inRect = outRect.adjusted(self.gripSize, self.gripSize,
+                                  -self.gripSize, -self.gripSize)
+
+        # top left
+        self.cornerGrips[0].setGeometry(
+            QRect(outRect.topLeft(), inRect.topLeft()))
+        # top right
+        self.cornerGrips[1].setGeometry(
+            QRect(outRect.topRight(), inRect.topRight()).normalized())
+        # bottom right
+        self.cornerGrips[2].setGeometry(
+            QRect(inRect.bottomRight(), outRect.bottomRight()))
+        # bottom left
+        self.cornerGrips[3].setGeometry(
+            QRect(outRect.bottomLeft(), inRect.bottomLeft()).normalized())
+
+        # left edge
+        self.sideGrips[0].setGeometry(
+            0, inRect.top(), self.gripSize, inRect.height())
+        # top edge
+        self.sideGrips[1].setGeometry(
+            inRect.left(), 0, inRect.width(), self.gripSize)
+        # right edge
+        self.sideGrips[2].setGeometry(
+            inRect.left() + inRect.width(),
+            inRect.top(), self.gripSize, inRect.height())
+        # bottom edge
+        self.sideGrips[3].setGeometry(
+            self.gripSize, inRect.top() + inRect.height(),
+            inRect.width(), self.gripSize)
+
+    def resizeEvent(self, event):
+        QMainWindow.resizeEvent(self, event)
+        self.updateGrips()
+
+    def maximize_restore(self):
+        print(self.maximized)
+        if self.maximized:
+            self.showNormal()
+            self.maximized = False
+            self.maximizeRestoreButton.setIcon(QIcon("icons/maximize_white.png"))
+        else:
+            self.showMaximized()
+            self.maximized = True
+            self.maximizeRestoreButton.setIcon(QIcon("icons/restore_white.png"))
+
+    def double_click_to_maximize(self, event):
+        if event.type() == QEvent.MouseButtonDblClick:
+            QTimer.singleShot(250, lambda: self.maximize_restore())
+
+    def press_window(self, event):
+        if event.buttons() == Qt.LeftButton:
+            self.drag_pos = event.globalPos()
+            print("press_window - {}".format(event.globalPos()))
+            event.accept()
+
+    def move_window(self, event):
+        if self.maximized:
+            self.maximize_restore()
+
+        if event.buttons() == Qt.LeftButton:
+            self.move(self.pos() + event.globalPos() - self.drag_pos)
+            self.drag_pos = event.globalPos()
+            print("move_window - {} {} {}".format(self.pos(), event.globalPos(), self.drag_pos))
+            event.accept()
 
     def set_dark_mode_theme(self):
         # https://stackoverflow.com/questions/48256772/dark-theme-for-qt-widgets

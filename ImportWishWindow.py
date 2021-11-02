@@ -14,6 +14,7 @@ class ImportWishDialog(QDialog):
     number_label = None
     select_button = None
     accept_button = None
+    exit_button = None
 
     inserted_new_wishes = pyqtSignal()
 
@@ -29,7 +30,7 @@ class ImportWishDialog(QDialog):
         # self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setWindowTitle("Adding {}...".format(self.banner_type))
         self.setAttribute(Qt.WA_DeleteOnClose)
-        # self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setWindowFlags(Qt.FramelessWindowHint)
         self.setStyleSheet("QDialog { background-color: rgb(75,75,75); border: 2px solid rgb(10,10,10); }"
                            "QLabel { color: white; }"
                            "QPushButton { color: white; background-color: transparent; border-style: solid; border-width: 2px; border-radius: 5px; border-color: rgb(130, 130, 130);}"
@@ -63,14 +64,14 @@ class ImportWishDialog(QDialog):
         name_label.setText("Adding {}...".format(self.banner_type))
         h_layout.addWidget(name_label)
 
-        exit_button = QPushButton()
-        exit_button.setFixedSize(50, 25)
-        exit_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-        exit_button.setIcon(QIcon("icons/exit_white.png"))
-        exit_button.setStyleSheet("QPushButton { background-color: transparent; border: 0px; border-radius: 0px }"
-                                  "QPushButton:hover{ background-color: rgba(255, 0, 0, 255) }"
-                                  "QPushButton:pressed{ background-color: rgba(255, 100, 100, 255) }")
-        h_layout.addWidget(exit_button)
+        self.exit_button = QPushButton()
+        self.exit_button.setFixedSize(50, 25)
+        self.exit_button.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+        self.exit_button.setIcon(QIcon("icons/exit_white.png"))
+        self.exit_button.setStyleSheet("QPushButton { background-color: transparent; border: 0px; border-radius: 0px }"
+                                       "QPushButton:hover{ background-color: rgba(255, 0, 0, 255) }"
+                                       "QPushButton:pressed{ background-color: rgba(255, 100, 100, 255) }")
+        h_layout.addWidget(self.exit_button)
 
         title_bar = QFrame()
         title_bar.setMinimumSize(0, 25)
@@ -107,6 +108,7 @@ class ImportWishDialog(QDialog):
     def setup_ui_logic(self):
         self.select_button.clicked.connect(self.on_click_select_button)
         self.accept_button.clicked.connect(self.on_click_accept_button)
+        self.exit_button.clicked.connect(self.on_click_exit_button)
 
     def on_click_select_button(self):
         files = QFileDialog.getOpenFileNames(self, "Select one or more files to open", "C:", "Images (*.png *.jpg)")
@@ -120,6 +122,9 @@ class ImportWishDialog(QDialog):
         # progress bar
         # if successful then emit signal
         self.inserted_new_wishes.emit()
+        self.close()
+
+    def on_click_exit_button(self):
         self.close()
 
     def set_round_edges(self):
