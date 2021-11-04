@@ -244,7 +244,7 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
                     self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
-                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_5_star)))  # pity
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem((' ' + str(pity_number_5_star))[-2:]))  # pity
                     self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.characterBannerTableWidget.rowCount() - 1)))  # id
 
                     # color item to gold
@@ -261,7 +261,7 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
                     self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
-                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_4_star)))  # pity
+                    self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem((' ' + str(pity_number_4_star))[-2:])) # pity
                     self.characterBannerTableWidget.setItem(self.characterBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.characterBannerTableWidget.rowCount() - 1)))  # id
 
                     # color item to violet
@@ -284,7 +284,7 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
                     self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
-                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_5_star)))  # pity
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem((' ' + str(pity_number_5_star))[-2:]))   # pity
                     self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.weaponBannerTableWidget.rowCount() - 1)))  # id
 
                     # color item to gold
@@ -301,7 +301,7 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
                     self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
-                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_4_star)))  # pity
+                    self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem((' ' + str(pity_number_4_star))[-2:]))  # pity
                     self.weaponBannerTableWidget.setItem(self.weaponBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.weaponBannerTableWidget.rowCount() - 1)))  # id
 
                     # color item to violet
@@ -324,9 +324,8 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
                     self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
-                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_5_star)))  # pity
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem((' ' + str(pity_number_5_star))[-2:]))  # pity
                     self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.standardBannerTableWidget.rowCount() - 1)))  # id
-
                     # color item to gold
                     for column in range(3):
                         self.standardBannerTableWidget.item(self.standardBannerTableWidget.rowCount() - 1, column).setForeground(QBrush(QColor(255, 215, 0)))
@@ -341,7 +340,7 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
                     self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
-                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_4_star)))  # pity
+                    self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem((' ' + str(pity_number_4_star))[-2:]))  # pity
                     self.standardBannerTableWidget.setItem(self.standardBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.standardBannerTableWidget.rowCount() - 1)))  # id
 
                     # color item to violet
@@ -364,7 +363,7 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
                     self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
-                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_5_star)))  # pity
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem((' ' + str(pity_number_5_star))[-2:]))   # pity
                     self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.beginnerBannerTableWidget.rowCount() - 1)))  # id
 
                     # color item to gold
@@ -381,7 +380,7 @@ class Ui(QtWidgets.QMainWindow):
 
                     self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 0, QTableWidgetItem(wish[1]))  # name
                     self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 1, QTableWidgetItem(wish[2]))  # date
-                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem(str(pity_number_4_star)))  # pity
+                    self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 2, QTableWidgetItem((' ' + str(pity_number_4_star))[-2:]))  # pity
                     self.beginnerBannerTableWidget.setItem(self.beginnerBannerTableWidget.rowCount() - 1, 3, QTableWidgetItem("{:03d}".format(self.beginnerBannerTableWidget.rowCount() - 1)))  # id
 
                     # color item to violet
