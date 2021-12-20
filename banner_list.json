@@ -45,7 +45,13 @@
     {"id": "20", "name": "Farewell of Snezhnaya", "start": "2021-10-13", "end": "2021-11-02",
       "rate_up": [{"name": "Tartaglia"}, {"name": "Ningguang"}, {"name": "Chongyun"}, {"name": "Yanfei"}]},
     {"id": "21", "name": "Moment of Bloom", "start": "2021-11-02", "end": "2021-11-23",
-      "rate_up": [{"name": "Hu Tao"}, {"name": "Thoma"}, {"name": "Sayu"}, {"name": "Diona"}]}
+      "rate_up": [{"name": "Hu Tao"}, {"name": "Thoma"}, {"name": "Sayu"}, {"name": "Diona"}]},
+    {"id": "22", "name": "Secretum Secretorum", "start": "2021-11-24", "end": "2021-12-14",
+      "rate_up": [{"name": "Albedo"}, {"name": "Bennett"}, {"name": "Noelle"}, {"name": "Rosaria"}]},
+    {"id": "23", "name": "Born of Ocean Swell", "start": "2021-11-24", "end": "2021-12-14",
+      "rate_up": [{"name": "Eula"}, {"name": "Bennett"}, {"name": "Noelle"}, {"name": "Rosaria"}]},
+    {"id": "24", "name": "Oni's Royale", "start": "2021-12-14", "end": "2022-01-04",
+      "rate_up": [{"name": "Itto"}, {"name": "Gorou"}, {"name": "Barbara"}, {"name": "Xiangling"}]}
   ],
   "Standard Wish": [
     {"id": "01", "name": "Wanderlust Invocation", "start": "2020-09-28", "end": "Indefinite",
@@ -131,6 +137,14 @@
     {"id": "20", "name": "Epitome Invocation", "start": "2021-11-02", "end": "2021-11-23",
       "rate_up": [{"name": "Staff of Homa"}, {"name": "Elegy for the End"},
         {"name": "Mouun's Moon"}, {"name": "The Widsith"},
-        {"name": "Wavebreaker's Fin"}, {"name": "Rainslasher"}, {"name": "Sacrificial Sword"}]}
+        {"name": "Wavebreaker's Fin"}, {"name": "Rainslasher"}, {"name": "Sacrificial Sword"}]},
+    {"id": "21", "name": "Epitome Invocation", "start": "2021-11-24", "end": "2021-12-14",
+      "rate_up": [{"name": "Freedom-Sworn"}, {"name": "Song of Broken Pines"},
+        {"name": "Alley Hunter"}, {"name": "Wine and Song"},
+        {"name": "Dragon's Bane"}, {"name": "Sacrificial Greatsword"}, {"name": "Lion's Roar"}]},
+    {"id": "22", "name": "Epitome Invocation", "start": "2021-12-14", "end": "2021-01-04",
+      "rate_up": [{"name": "Redhorn Stonethresher"}, {"name": "Skyward Harp"},
+        {"name": "Mitternachts Waltz"}, {"name": "Sacrificial Fragments"},
+        {"name": "Favonius Lance"}, {"name": "The Bell"}, {"name": "The Alley Flash"}]}
   ]
 }

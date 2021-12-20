@@ -1,6 +1,6 @@
 # genshin-wish-viewer
 
-This app is designed to show user more informations about wishes, which he did in game: Genshin Impact.
+This app is designed to show user more information about wishes, which he did in game: Genshin Impact.
 
 Genshin Impact stores history of wishes for 6 months. So to preserve this information for longer, user could screenshot them to look like this:
 

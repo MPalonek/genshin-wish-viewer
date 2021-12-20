@@ -5,6 +5,9 @@ import logging
 # https://www.sqlitetutorial.net/sqlite-python/
 # https://stackoverflow.com/questions/10325683/can-i-read-and-write-to-a-sqlite-database-concurrently-from-multiple-connections
 
+# character and banner lists data:
+# https://genshin-impact.fandom.com/wiki/Wishes/List#Current
+
 
 # create WishDatabase and PresetDatabase inherited from Database class
 class Database:
