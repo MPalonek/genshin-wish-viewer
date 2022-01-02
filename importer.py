@@ -32,7 +32,7 @@ class WishImporter:
             thresholding_type = thresholding_type | cv2.THRESH_OTSU
         ret, img_bin = cv2.threshold(img, threshold, 255, thresholding_type)
 
-    def get_text_countours(self, img_gray):
+    def get_text_contours(self, img_gray):
         ret, img_binarized = cv2.threshold(img_gray, 241, 255, cv2.THRESH_BINARY)
 
         kernel_30 = np.ones((30, 30), np.uint8)
@@ -51,21 +51,44 @@ class WishImporter:
                 # draw rectangles over original img
                 # cv2.rectangle(img, (x, y), (x + w, y + h), (0, 0, 255), 1)
 
+        return self.group_and_sort_text_contours(img_gray, coordinates)
+
+    def group_and_sort_text_contours(self, img_gray, contour_crd):
+        row_length = 3
+        # Check, if image is new or old style (old style - 3 rows, new style - 4 rows)
+        # In new style 3rd row is wish type. There can be 4 specific values in there.
+        # Because findCounturs is sorted by y you have to get the whole row, sort by x and then you can check.
+        if len(contour_crd) <= 3:
+            pass
+        else:
+            single_row_contour_crd = sorted(contour_crd[:4], key=lambda coordinate_x: coordinate_x[0])
+            third_row_img_snip = img_gray[single_row_contour_crd[2][1]:single_row_contour_crd[2][1] + single_row_contour_crd[2][3], single_row_contour_crd[2][0]:single_row_contour_crd[2][0] + single_row_contour_crd[2][2]]
+            third_row_text = self.get_text_from_image(third_row_img_snip).replace('\n', " ").rstrip()
+            # Beginner wish value might be wrong...
+            wish_type_text = ["Character Event Wish", "Permanent Wish", "Weapon Event Wish", "Beginners' Wish"]
+            if third_row_text in wish_type_text:
+                row_length = 4
+
         # Sorting. findContours sorts by y. if y1 == y2 then it looks at x (basically scans from bottom left to right).
         # Elements in same row may have a few pixels difference between each other which will mess up their order.
-        # Also you should have 3 elements in 1 row, otherwise something wasn't detected!
-        if (len(coordinates) % 3) == 0:
+        # Also you should have 3 or 4 elements in 1 row, otherwise something wasn't detected!
+        if (len(contour_crd) % row_length) == 0:
             grouped_coordinates = []
             wish_coordinates = []
-            for count, crd in enumerate(coordinates, start=1):
+            for count, crd in enumerate(contour_crd, start=1):
                 wish_coordinates.append(crd)
-                if count % 3 == 0:
+                if count % row_length == 0:
                     # sort by x
                     grouped_coordinates.append(sorted(wish_coordinates, key=lambda coordinate_x: coordinate_x[0]))
                     wish_coordinates = []
         else:
             # TODO give some hint on what image we failed, maybe give coordinates values
-            raise Exception("Number of detected objects wasn't multiplication of 3")
+            raise Exception("Number of detected objects wasn't multiplication of {}. Len(contour_crd): {}".format(row_length, len(contour_crd)))
+
+        # remove wish type, so what this function returns will work with the rest of the code as originally designed
+        if row_length == 4:
+            for i in range(len(grouped_coordinates)):
+                grouped_coordinates[i].pop(2)
         return grouped_coordinates
 
     def get_text_from_image(self, img, xconfig="-c page_separator=''"):
@@ -130,7 +153,7 @@ class WishImporter:
 
     def get_wishes_from_image(self, img_path):
         img_gray = self.load_image(img_path)
-        coordinates = self.get_text_countours(img_gray)
+        coordinates = self.get_text_contours(img_gray)
         wishes = []
         # pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
         # pytesseract.get_tesseract_version()
@@ -138,7 +161,7 @@ class WishImporter:
             wish = []
             for crdnt in item:
                 img_snip = img_gray[crdnt[1]:crdnt[1] + crdnt[3], crdnt[0]:crdnt[0] + crdnt[2]]
-                wish.append(self.get_text_from_image(img_snip)[:-1])  # remove end of line char at the end
+                wish.append(self.get_text_from_image(img_snip).replace('\n', " ").rstrip())  # remove whitespaces from string, replace is in case \n will be in the middle of string
             wishes.append(self.add_rarity_to_wish(wish))
         return wishes
 
