@@ -51,7 +51,11 @@
     {"id": "23", "name": "Born of Ocean Swell", "start": "2021-11-24", "end": "2021-12-14",
       "rate_up": [{"name": "Eula"}, {"name": "Bennett"}, {"name": "Noelle"}, {"name": "Rosaria"}]},
     {"id": "24", "name": "Oni's Royale", "start": "2021-12-14", "end": "2022-01-04",
-      "rate_up": [{"name": "Itto"}, {"name": "Gorou"}, {"name": "Barbara"}, {"name": "Xiangling"}]}
+      "rate_up": [{"name": "Itto"}, {"name": "Gorou"}, {"name": "Barbara"}, {"name": "Xiangling"}]},
+    {"id": "25", "name": "The Transcendent One Returns", "start": "2022-01-05", "end": "2022-01-25",
+      "rate_up": [{"name": "Shenhe"}, {"name": "Yun Jin"}, {"name": "Ningguang"}, {"name": "Chongyun"}]},
+    {"id": "26", "name": "Invitation to Mundane Life", "start": "2022-01-05", "end": "2022-01-25",
+      "rate_up": [{"name": "Xiao"}, {"name": "Yun Jin"}, {"name": "Ningguang"}, {"name": "Chongyun"}]}
   ],
   "Standard Wish": [
     {"id": "01", "name": "Wanderlust Invocation", "start": "2020-09-28", "end": "Indefinite",
@@ -145,6 +149,10 @@
     {"id": "22", "name": "Epitome Invocation", "start": "2021-12-14", "end": "2021-01-04",
       "rate_up": [{"name": "Redhorn Stonethresher"}, {"name": "Skyward Harp"},
         {"name": "Mitternachts Waltz"}, {"name": "Sacrificial Fragments"},
-        {"name": "Favonius Lance"}, {"name": "The Bell"}, {"name": "The Alley Flash"}]}
+        {"name": "Favonius Lance"}, {"name": "The Bell"}, {"name": "The Alley Flash"}]},
+    {"id": "23", "name": "Epitome Invocation", "start": "2022-01-05", "end": "2022-01-25",
+      "rate_up": [{"name": "Calamity Queller"}, {"name": "Primordial Jade Winged-Spear"},
+        {"name": "Favonius Warbow"}, {"name": "The Widsith"},
+        {"name": "Lithic Spear"}, {"name": "Favonius Greatsword"}, {"name": "The Flute"}]}
   ]
 }
