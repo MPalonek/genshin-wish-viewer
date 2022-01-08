@@ -5,6 +5,7 @@ import pytesseract
 import logging
 import os
 
+logger = logging.getLogger('GenshinWishViewer')
 # https://medium.com/analytics-vidhya/how-to-detect-tables-in-images-using-opencv-and-python-6a0f15e560c3
 # https://docs.opencv.org/master/d9/d61/tutorial_py_morphological_ops.html
 
@@ -111,7 +112,7 @@ class WishImporter:
 
     def import_from_dir(self, dir_path, table_name):
         if table_name not in ["wishCharacter", "wishWeapon", "wishStandard", "wishBeginner"]:
-            logging.error("Wrong table name!")
+            logger.error("Wrong table name!")
             return
         img_paths = self.get_image_paths_from_dir_path(dir_path)
         for img_path in img_paths:
@@ -119,18 +120,18 @@ class WishImporter:
             if not self.check_if_wishes_are_already_in_db(wishes):
                 self.insert_to_db(wishes, table_name)
             else:
-                logging.info("Wishes: {} are already in db!".format(wishes))
+                logger.info("Wishes: {} are already in db!".format(wishes))
 
     def import_from_list_of_image_paths(self, img_paths, table_name):
         if table_name not in ["wishCharacter", "wishWeapon", "wishStandard", "wishBeginner"]:
-            logging.error("Wrong table name!")
+            logger.error("Wrong table name!")
             return
         for img_path in img_paths:
             wishes = self.get_wishes_from_image(img_path)
             if not self.check_if_wishes_are_already_in_db(wishes):
                 self.insert_to_db(wishes, table_name)
             else:
-                logging.info("Wishes: {} are already in db!".format(wishes))
+                logger.info("Wishes: {} are already in db!".format(wishes))
 
     def get_image_paths_from_dir_path(self, dir_path):
         if dir_path == "":
@@ -177,7 +178,7 @@ class WishImporter:
             self.db.insert_multiple_wish_entries(table_name, wishes)
         else:
             # no wishes - suspicious
-            logging.info("No wishes to insert to database...")
+            logger.info("No wishes to insert to database...")
 
 
 
