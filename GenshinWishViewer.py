@@ -22,19 +22,34 @@ def parse_arguments():
 
 
 def init_logger(debug):
+    logger = logging.getLogger('GenshinWishViewer')
     if debug:
         log_level = logging.DEBUG
     else:
         log_level = logging.INFO
 
     log_filename = "gwv_log_0.log"
-    logging.basicConfig(filename=log_filename, format='%(asctime)s.%(msecs)03d %(levelname)s: %(message)s',
-                        datefmt='%H:%M:%S', level=log_level)
+    logger.setLevel(log_level)
+    # FileHandler sends log records to the log_filename file.
+    file_handler = logging.FileHandler(log_filename)
+    file_handler.setLevel(log_level)
+    # StreamHandler sends log records to a stream. If the stream is not specified, the sys.stderr is used.
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(log_level)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
+
+    # Formatter is an object which configures the final order, structure, and contents of the log record.
+    formatter = logging.Formatter(fmt='%(asctime)s.%(msecs)03d %(levelname)s: %(message)s', datefmt='%H:%M:%S')
+    file_handler.setFormatter(formatter)
+    console_handler.setFormatter(formatter)
+
     if os.path.isfile(log_filename):
         f = open(log_filename, "a")
         f.write("\n-----------------------------------------------------------------\n\n")
         f.close()
-    logging.info('Starting Genshin Wish Viewer. Current date is: {}. Log level: {}'.format(date.today(), log_level))
+    logger.info('Starting Genshin Wish Viewer. Current date is: {}. Log level: {}'.format(date.today(), log_level))
 
 
 class Ui(QtWidgets.QMainWindow):
@@ -59,6 +74,7 @@ class Ui(QtWidgets.QMainWindow):
 
         self.db = WishDatabase('db.db')
         self.db.initialize_database()
+        self.load_wishes_to_memory()
 
         self.setup_ui()
         self.show()
@@ -159,7 +175,6 @@ class Ui(QtWidgets.QMainWindow):
         self.beginnerBannerFiveStarButton.clicked.connect(self.update_beginner_wish_table)
         self.beginnerBannerFourStarButton.clicked.connect(self.update_beginner_wish_table)
 
-        self.load_wishes_to_memory()
         self.update_wish_ui()
 
     def on_click_close_button(self):

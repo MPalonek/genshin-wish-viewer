@@ -2,6 +2,7 @@ import sqlite3
 from sqlite3 import Error
 import logging
 
+logger = logging.getLogger('GenshinWishViewer')
 # https://www.sqlitetutorial.net/sqlite-python/
 # https://stackoverflow.com/questions/10325683/can-i-read-and-write-to-a-sqlite-database-concurrently-from-multiple-connections
 
@@ -28,17 +29,17 @@ class Database:
         """
         try:
             self.connection = sqlite3.connect(db_path)
-            logging.info('Connected to database - {}. SQlite version {}, sqlite adapter module version {}'
+            logger.info('Connected to database - {}. SQlite version {}, sqlite adapter module version {}'
                          .format(self.database_name, sqlite3.sqlite_version, sqlite3.version))
         except Error as e:
-            logging.error('Failed to connect to database. {}'.format(e))
+            logger.error('Failed to connect to database. {}'.format(e))
 
     def execute_command(self, command):
         """ execute command statement
         :param command: sqlite statement
         :return:
         """
-        logging.debug('Executing command: {}'.format(command))
+        logger.debug('Executing command: {}'.format(command))
         return self.connection.execute(command)
 
     def create_tables(self):
@@ -47,41 +48,41 @@ class Database:
 
     def initialize_database(self):
         # check version of database
-        logging.info("Initializing database")
+        logger.info("Initializing database")
         try:
             check_version_command = "SELECT version FROM systemInfo;"
             cursor = self.execute_command(check_version_command)
             output = cursor.fetchall()
-            logging.info("Database versions: {}, app expects version: {}".format(output, self.database_version))
+            logger.info("Database versions: {}, app expects version: {}".format(output, self.database_version))
             if output:
                 db_version = int(output[-1][0])
                 if db_version > self.database_version:
-                    logging.error("Database version ({}) is newer than genshin wish viewer version ({})!"
+                    logger.error("Database version ({}) is newer than genshin wish viewer version ({})!"
                                   .format(db_version, self.database_version))
                     raise Exception("Database version is newer than genshin wish counter version!")
                 elif db_version < self.database_version:
-                    logging.info("Database version is older than genshin wish viewer version. Upgrading...")
+                    logger.info("Database version is older than genshin wish viewer version. Upgrading...")
                     # upgrade_db(db_version)
                 else:
-                    logging.info("Database version matches genshin wish viewer version.")
+                    logger.info("Database version matches genshin wish viewer version.")
         except sqlite3.OperationalError as e:
             if str(e) == "no such table: systemInfo":
                 # database is empty - create tables
-                logging.info("Missing systemInfo table. Creating tables...")
+                logger.info("Missing systemInfo table. Creating tables...")
                 self.create_tables()
             else:
                 # unknown error
                 raise
 
     def create_info_table(self):
-        logging.info("Creating info table")
+        logger.info("Creating info table")
         system_info_command = "CREATE TABLE IF NOT EXISTS systemInfo (creationDate date DEFAULT CURRENT_TIMESTAMP," \
                               "version integer NOT NULL PRIMARY KEY);"
         self.execute_command(system_info_command)
         self.insert_info_entry(self.database_version)
 
     def insert_info_entry(self, version):
-        logging.info("Inserting systeminfo entry with version {}".format(version))
+        logger.info("Inserting systeminfo entry with version {}".format(version))
         system_info_entry = "INSERT INTO systemInfo (version) VALUES ({});".format(version)
         self.execute_command(system_info_entry)
         self.connection.commit()
@@ -123,7 +124,7 @@ class PresetDatabase(Database):
     # ---9---         700000        6       12      16          2
 
     def create_preset_tables(self):
-        logging.info("Creating preset tables")
+        logger.info("Creating preset tables")
         preset_commands = ["CREATE TABLE IF NOT EXISTS Characters ();",
                            "CREATE TABLE IF NOT EXISTS Weapons ();",
                            "CREATE TABLE IF NOT EXISTS Materials ();",
@@ -170,7 +171,7 @@ class WishDatabase(Database):
     database_name = "WishDatabase"
 
     def create_wish_tables(self):
-        logging.info("Creating wish tables")
+        logger.info("Creating wish tables")
         wish_commands = ["CREATE TABLE IF NOT EXISTS wishCharacter (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
                          " NOT NULL, itemName text NOT NULL, timeReceived date NOT NULL, itemRarity integer NOT NULL);",
                          "CREATE TABLE IF NOT EXISTS wishWeapon (id integer PRIMARY KEY AUTOINCREMENT, itemType text"
@@ -195,7 +196,7 @@ class WishDatabase(Database):
         cursor = self.execute_command(cmd)
         for item in cursor:
             tables.append(item[0])
-        # sqlite_sequence is always in sqlite_master table, if there are any other tables - remove it
+        # sqlite_sequence is always in sqlite_master table, if there are any other tables. Remove it
         if tables:
             tables.remove('sqlite_sequence')
         return tables
@@ -215,7 +216,7 @@ class WishDatabase(Database):
             select = 'SELECT itemType, itemName, timeReceived, itemRarity FROM {} ORDER BY timeReceived ASC, id ASC;'.format(table_name)
             return self.connection.execute(select).fetchall()
         except Error as e:
-            logging.error('Failed to select entries. {}'.format(e))
+            logger.error('Failed to select entries. {}'.format(e))
 
     def insert_wish_entry(self, table, wish):
         try:
@@ -224,7 +225,7 @@ class WishDatabase(Database):
             self.connection.execute(insert)
             self.connection.commit()
         except Error as e:
-            logging.error('Failed to insert entry. {}'.format(e))
+            logger.error('Failed to insert entry. {}'.format(e))
             self.failed_insert_number = self.failed_insert_number + 1
 
     def insert_multiple_wish_entries(self, table, wishes):
@@ -236,5 +237,5 @@ class WishDatabase(Database):
                 self.connection.execute(insert)
             self.connection.commit()
         except Error as e:
-            logging.error('Failed to insert entry. {}'.format(e))
+            logger.error('Failed to insert entry. {}'.format(e))
             self.failed_insert_number = self.failed_insert_number + 1
