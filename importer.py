@@ -33,6 +33,152 @@ class WishImporter:
             thresholding_type = thresholding_type | cv2.THRESH_OTSU
         ret, img_bin = cv2.threshold(img, threshold, 255, thresholding_type)
 
+    def get_wishes_from_imagev2(self, img_path):
+        logger.debug("get_wishes_from_image: img_path: {}". format(img_path))
+        img_gray = self.load_image(img_path)
+
+        # binarize image to have only table lines
+        # first cut off values above 205, then binarize everything bigger than 185
+        # so we end up with binarizing everything in range of (185, 205)
+        # then do morphological operations as text has similar values as table lines
+        ret, img_tozero = cv2.threshold(img_gray, 210, 255, cv2.THRESH_TOZERO_INV)
+        ret, img_binarized = cv2.threshold(img_tozero, 180, 255, cv2.THRESH_BINARY)
+        kernel = np.ones((3, 3), np.uint8)
+        # open to get rid of text
+        img_binarized = cv2.morphologyEx(img_binarized, cv2.MORPH_OPEN, kernel)
+        # close to fill small holes in table lines
+        img_binarized = cv2.morphologyEx(img_binarized, cv2.MORPH_CLOSE, kernel)
+        # self.show_img(img_binarized)
+
+        # calculate how wide and high is the table
+        x_start, x_end = self.find_long_line(img_binarized)
+        y_start, y_end = self.find_long_line(np.rot90(img_binarized))
+
+        # self.show_img(img_binarized[y_start:y_end, x_start:x_end])
+
+        # get rows coordinates
+        rows_coords = []  # x_start, x_end, y_start, y_end
+        ver_lines = self.find_separating_lines(np.rot90(img_binarized[y_start:y_end, x_start:x_end]))
+        previous_y_start = y_start
+        for i in ver_lines:
+            rows_coords.append([x_start, x_end, previous_y_start, y_start + i[0]])
+            previous_y_start = y_start + i[0]
+        if (y_end - previous_y_start) > 30:
+            rows_coords.append([x_start, x_end, previous_y_start, y_end])
+
+        # seperate rows to get cells coordinates
+        cell_coords = []  # x_start, x_end, y_start, y_end
+        for i, crds in enumerate(rows_coords):
+            hor_lines = self.find_separating_lines(img_binarized[crds[2]:crds[3], crds[0]:crds[1]])
+            cell_coords.append([])
+            previous_x_start = x_start
+            for j in hor_lines:
+                cell_coords[i].append([previous_x_start, x_start + j[0], crds[2], crds[3]])
+                previous_x_start = x_start + j[0]
+            cell_coords[i].append([previous_x_start, x_end, crds[2], crds[3]])
+            if len(cell_coords[i]) == 3 or len(cell_coords[i]) == 4:
+                pass
+            else:
+                raise Exception("Number of detected objects in a row wasn't 3 or 4. Len(cell_coords[{}]: {}".format(i, len(cell_coords[i])))
+
+        # for i in cell_coords:
+        #     for cell in i:
+        #         self.show_img(img_gray[cell[2]:cell[3], cell[0]:cell[1]])
+
+        # get wish text from cells in rows
+        wishes = []
+        for row in cell_coords:
+            wish = []
+            for crdnt in row:
+                img_snip = img_gray[crdnt[2]:crdnt[3], crdnt[0]:crdnt[1]]
+                wish.append(self.get_text_from_image(img_snip).strip().replace('\n', " "))  # remove whitespaces from string, replace is in case \n will be in the middle of string
+            if wish[0] == "Item Type":
+                continue
+            # remove "wish type" information, if it's new schema
+            if len(wish) == 4:
+                wish.pop(2)
+            wishes.append(self.add_rarity_to_wish(wish))
+
+        # reverse wishes (the ones on bottom are older and they should be inserted first to db)
+        wishes = wishes[::-1]
+
+        for item in wishes:
+            logger.debug(item)
+        logger.debug("--------")
+        return wishes
+
+    def find_long_line(self, img, offset=5):
+        start = 0
+        end = 0
+        found_line = False
+        for y, row in enumerate(img):
+            if found_line:
+                break
+            for x, cell in enumerate(row):
+                if cell == 255:
+                    if not found_line:
+                        found_line = True
+                        start = x
+                        end = x
+
+                    if x != 0 and row[x - 1] == 255:
+                        end = x
+                    elif start == end:
+                        # corner case, when we found beginning of line
+                        pass
+                    else:
+                        # we want to have a long line from start to beginning
+                        # if there wasn't continuity and line is short - go to next row
+                        found_line = False
+                        break
+                # if we didn't find table within 30 pixels go to next row
+                if x == 30 and not found_line:
+                    break
+            # we found long line
+            if (end - start) > 100:
+                break
+        start = start+offset
+        end = end-offset
+
+        # check if start or end is negative
+        if any(x < 0 for x in [start, end]):
+            raise Exception("find_long_line: either start: {} or end: {} has negative value!".format(start, end))
+
+        logger.debug("find_long_line: start: {}, end: {}".format(start, end))
+        return start, end
+
+    def find_separating_lines(self, img):
+        # we get image with lines only inside
+        # lines around table should be removed when used find_long_line
+        # so we can take whatever row
+        grouped_lines_coords = []
+        line_coords = []
+        for x, cell in enumerate(img[10]):
+            if cell == 255:
+                line_coords.append(x)
+
+        # merge values next to each other
+        grouped = self.group_consecutives(line_coords)
+        for x in grouped:
+            grouped_lines_coords.append([min(x), max(x)])
+
+        return grouped_lines_coords
+
+    def group_consecutives(self, vals, step=1):
+        """Return list of consecutive lists of numbers from vals (number list)."""
+        run = []
+        result = [run]
+        expect = None
+        for v in vals:
+            if (v == expect) or (expect is None):
+                run.append(v)
+            else:
+                run = [v]
+                result.append(run)
+            expect = v + step
+        return result
+
+
     def get_text_contours(self, img_gray):
         ret, img_binarized = cv2.threshold(img_gray, 241, 255, cv2.THRESH_BINARY)
 
@@ -98,18 +244,6 @@ class WishImporter:
             raise Exception("Failed to read text from image.")
         return text
 
-    # def get_wishes_from_image(self, img, coordinates):
-    #     text = []
-    #     # pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-    #     # pytesseract.get_tesseract_version()
-    #     for item in coordinates:
-    #         wish = []
-    #         for crdnt in item:
-    #             img_snip = img[crdnt[1]:crdnt[1] + crdnt[3], crdnt[0]:crdnt[0] + crdnt[2]]
-    #             wish.append(self.get_text_from_image(img_snip)[:-1])  # remove end of line char at the end
-    #         text.append(wish)
-    #     return text
-
     def import_from_dir(self, dir_path, table_name):
         if table_name not in ["wishCharacter", "wishWeapon", "wishStandard", "wishBeginner"]:
             logger.error("Wrong table name!")
@@ -127,7 +261,7 @@ class WishImporter:
             logger.error("Wrong table name!")
             return
         for img_path in img_paths:
-            wishes = self.get_wishes_from_image(img_path)
+            wishes = self.get_wishes_from_imagev2(img_path)
             if not self.check_if_wishes_are_already_in_db(wishes):
                 self.insert_to_db(wishes, table_name)
             else:
