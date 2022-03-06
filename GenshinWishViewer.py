@@ -4,13 +4,14 @@ from datetime import date
 import os
 from database import WishDatabase
 from ImportWishWindow import ImportWishDialog
+from StartupWindow import SplashScreen
 from SideGrip import SideGrip
 from importer import WishImporter
 import time
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap, QBitmap, QPainter, QBrush
 from PyQt5.QtCore import Qt, QSize, QEvent, QTimer, QRect, QMetaObject, QPoint
-from PyQt5.QtWidgets import QApplication, QPushButton, QFrame, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QSizeGrip, QPushButton, QLabel, QTableWidgetItem
+from PyQt5.QtWidgets import QApplication, QPushButton, QFrame, QMainWindow, QSplashScreen, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QSizeGrip, QPushButton, QLabel, QTableWidgetItem
 import sys
 # potential UI - https://github.com/Wanderson-Magalhaes/Simple_PySide_Base/blob/master/main.py
 
@@ -45,6 +46,7 @@ def init_logger(debug):
     file_handler.setFormatter(formatter)
     console_handler.setFormatter(formatter)
 
+    # add separation to easily differentiate subsequent runs
     if os.path.isfile(log_filename):
         f = open(log_filename, "a")
         f.write("\n-----------------------------------------------------------------\n\n")
@@ -70,6 +72,9 @@ class Ui(QtWidgets.QMainWindow):
 
     def __init__(self):
         super(Ui, self).__init__()
+
+        w = SplashScreen()
+        w.show()
         uic.loadUi('mainwindow.ui', self)
 
         self.db = WishDatabase('db.db')
@@ -77,6 +82,7 @@ class Ui(QtWidgets.QMainWindow):
         self.load_wishes_to_memory()
 
         self.setup_ui()
+        w.close()
         self.show()
 
     def setup_ui(self):
@@ -577,9 +583,11 @@ def main():
     window = Ui()
     app.exec_()
 
-    # wi = WishImporter(db)
-    # path = "D:/Repo/genshin-wish-viewer/wishCharacterTest"
-    # wi.import_from_dir(path, "wishCharacter")
+    # wi = WishImporter('db')
+    # for i in range(22):
+    #     img_path = "D:/Repo/genshin-wish-viewer/wishCharacterTest/{:02}.JPG".format(i)
+    #     wishes = wi.get_wishes_from_imagev2(img_path)
+    #     print("***")
 
     # wi = WishImporter()
     # for i in range(54):
