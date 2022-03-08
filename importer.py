@@ -34,7 +34,7 @@ class WishImporter:
         ret, img_bin = cv2.threshold(img, threshold, 255, thresholding_type)
 
     def get_wishes_from_imagev2(self, img_path):
-        logger.debug("get_wishes_from_image: img_path: {}". format(img_path))
+        logger.debug("get_wishes_from_image -- img_path: {}". format(img_path))
         img_gray = self.load_image(img_path)
 
         # binarize image to have only table lines
@@ -44,7 +44,7 @@ class WishImporter:
         ret, img_tozero = cv2.threshold(img_gray, 210, 255, cv2.THRESH_TOZERO_INV)
         ret, img_binarized = cv2.threshold(img_tozero, 180, 255, cv2.THRESH_BINARY)
         kernel = np.ones((3, 3), np.uint8)
-        # open to get rid of text
+        # open to get rid of text remains
         img_binarized = cv2.morphologyEx(img_binarized, cv2.MORPH_OPEN, kernel)
         # close to fill small holes in table lines
         img_binarized = cv2.morphologyEx(img_binarized, cv2.MORPH_CLOSE, kernel)
@@ -134,7 +134,7 @@ class WishImporter:
                 # if we didn't find table within 30 pixels go to next row
                 if x == 30 and not found_line:
                     break
-            # we found long line
+            # check if we found line long enough, if so don't search anymore
             if (end - start) > 100:
                 break
         start = start+offset
@@ -142,9 +142,9 @@ class WishImporter:
 
         # check if start or end is negative
         if any(x < 0 for x in [start, end]):
-            raise Exception("find_long_line: either start: {} or end: {} has negative value!".format(start, end))
+            raise Exception("find_long_line -- either start: {} or end: {} has negative value!".format(start, end))
 
-        logger.debug("find_long_line: start: {}, end: {}".format(start, end))
+        logger.debug("find_long_line -- start: {}, end: {}".format(start, end))
         return start, end
 
     def find_separating_lines(self, img):
