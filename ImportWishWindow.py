@@ -2,9 +2,14 @@ from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap, QBitmap, QPainter
 from PyQt5.QtCore import Qt, QSize, QEvent, QTimer, QRect, QMetaObject, QPoint, pyqtSignal
 from PyQt5.QtWidgets import QApplication, QPushButton, QFrame, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QSizeGrip, QPushButton, QLabel, QDialog, QFileDialog
+from PyQt5.QtWidgets import QProgressBar
 from importer import WishImporter
 from database import WishDatabase
+import threading
+import logging
 import sys
+
+logger = logging.getLogger('GenshinWishViewer')
 
 
 class ImportWishDialog(QDialog):
@@ -15,8 +20,11 @@ class ImportWishDialog(QDialog):
     select_button = None
     accept_button = None
     exit_button = None
+    progress_label = None
+    progress_bar = None
 
-    inserted_new_wishes = pyqtSignal()
+    reload_memory_wishes = pyqtSignal()
+    insert_wishes_to_memory = pyqtSignal(list, str)
 
     def __init__(self, banner_type):
         QDialog.__init__(self)
@@ -25,7 +33,7 @@ class ImportWishDialog(QDialog):
         self.setup_ui_logic()
 
     def setup_ui(self):
-        self.setMinimumSize(250, 250)
+        self.setMinimumSize(250, 255)
         # self.setMaximumSize(300, 300)
         # self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setWindowTitle("Adding {}...".format(self.banner_type))
@@ -36,6 +44,7 @@ class ImportWishDialog(QDialog):
                            "QPushButton { color: white; background-color: transparent; border-style: solid; border-width: 2px; border-radius: 5px; border-color: rgb(130, 130, 130);}"
                            "QPushButton:hover { background-color: rgba(255, 255, 255, 20); border-color: rgba(255, 255, 255, 255); }"
                            "QPushButton:pressed { background-color: rgba(255, 255, 255, 60); border-color: rgba(255, 255, 255, 255); }"
+                           "QPushButton:disabled { background-color: rgba(255, 255, 255, 5); border-color: rgb(130, 130, 130); color: rgb(130, 130, 130) }"
                            )
 
         # create layout for whole QDialog
@@ -70,7 +79,8 @@ class ImportWishDialog(QDialog):
         self.exit_button.setIcon(QIcon("icons/exit_white.png"))
         self.exit_button.setStyleSheet("QPushButton { background-color: transparent; border: 0px; border-radius: 0px }"
                                        "QPushButton:hover{ background-color: rgba(255, 0, 0, 255) }"
-                                       "QPushButton:pressed{ background-color: rgba(255, 100, 100, 255) }")
+                                       "QPushButton:pressed{ background-color: rgba(255, 100, 100, 255) }"
+                                       "QPushButton:disabled{ background-color: rgb(75,75,75) }")
         h_layout.addWidget(self.exit_button)
 
         title_bar = QFrame()
@@ -101,6 +111,20 @@ class ImportWishDialog(QDialog):
         self.accept_button.setMinimumSize(50, 50)
         content_layout.addWidget(self.accept_button)
 
+        progress_layout = QHBoxLayout()
+        self.progress_label = QLabel()
+        self.progress_label.setText("0/0")
+        progress_layout.addWidget(self.progress_label)
+
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setStyleSheet(
+            "QProgressBar { border: 0px solid grey; border-radius: 0px; background-color: rgb(130, 130, 130); text-align: center; }"
+            "QProgressBar::chunk { background-color: rgb(30, 30, 30); border: 0px }")
+        self.progress_bar.setGeometry(0, 250, 250, 5)
+        self.progress_bar.setTextVisible(False)
+        progress_layout.addWidget(self.progress_bar)
+        content_layout.addLayout(progress_layout)
+
         content_frame = QFrame()
         content_frame.setLayout(content_layout)
         return content_frame
@@ -114,17 +138,22 @@ class ImportWishDialog(QDialog):
         files = QFileDialog.getOpenFileNames(self, "Select one or more files to open", "C:", "Images (*.png *.jpg)")
         self.selected_files = files[0]
         self.number_label.setText("Selected {} images".format(len(self.selected_files)))
+        self.progress_label.setText("0/{}".format(len(self.selected_files)))
 
     def on_click_accept_button(self):
         # insert wishes to db using importer
-        wi = WishImporter(WishDatabase("db.db"))
-        wi.import_from_list_of_image_paths(self.selected_files, self.banner_type)
+        import_thread = threading.Thread(target=self.import_images_thread)
+        import_thread.start()
+        # lock ui
         # progress bar
         # if successful then emit signal
-        self.inserted_new_wishes.emit()
-        self.close()
+        # self.inserted_new_wishes.emit()
+        # import_thread.join()
+        # self.close()
 
     def on_click_exit_button(self):
+        # self.reload_memory_wishes.emit()
+        # handle closing while we are still doing work...
         self.close()
 
     def set_round_edges(self):
@@ -142,3 +171,27 @@ class ImportWishDialog(QDialog):
         painter.drawRoundedRect(rect, radius, radius, Qt.AbsoluteSize)
         painter.end()
         self.setMask(bitmap)
+
+    def import_images_thread(self):
+        wi = WishImporter(WishDatabase("db.db"))
+        self.lock_ui()
+        self.progress_bar.setRange(0, len(self.selected_files))
+
+        if self.banner_type not in ["wishCharacter", "wishWeapon", "wishStandard", "wishBeginner"]:
+            logger.error("Wrong table name!")
+            return
+        for count, img_path in enumerate(self.selected_files):
+            wishes = wi.get_wishes_from_imagev2(img_path)
+            wi.insert_to_db(wishes, self.banner_type)
+            self.insert_wishes_to_memory.emit(wishes, self.banner_type)
+            self.progress_bar.setValue(count+1)
+            self.progress_label.setText("{}/{}".format(count+1, len(self.selected_files)))
+        self.unlock_ui()
+
+    def lock_ui(self):
+        self.select_button.setDisabled(True)
+        self.accept_button.setDisabled(True)
+
+    def unlock_ui(self):
+        self.select_button.setDisabled(False)
+        self.accept_button.setDisabled(False)

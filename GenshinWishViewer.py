@@ -79,7 +79,7 @@ class Ui(QtWidgets.QMainWindow):
 
         self.db = WishDatabase('db.db')
         self.db.initialize_database()
-        self.load_wishes_to_memory()
+        self.load_wishes_to_memory_from_db()
 
         self.setup_ui()
         w.close()
@@ -411,20 +411,20 @@ class Ui(QtWidgets.QMainWindow):
 
     def on_click_banner_add_button(self, banner_type):
         dialog = ImportWishDialog(banner_type)
-        dialog.inserted_new_wishes.connect(self.inserted_new_wishes)
+        dialog.reload_memory_wishes.connect(self.load_wishes_to_memory_from_db)
+        dialog.insert_wishes_to_memory.connect(self.add_wishes_to_memory)
         dialog.exec_()
 
-    def inserted_new_wishes(self):
-        # new wishes in db?
-        # check if there is more entries in db than in memory
-        # reload memory
-        # redraw ui
-        self.load_wishes_to_memory()
-        self.update_wish_ui()
-
-    def load_wishes_to_memory(self):
+    def load_wishes_to_memory_from_db(self):
         for key in self.wish_entries:
             self.wish_entries[key] = self.db.get_wishes_from_table(key)
+        self.update_wish_ui()
+
+    def add_wishes_to_memory(self, wishes, banner_type):
+        # someone could give wrong banner_type
+        for wish in wishes:
+            self.wish_entries[banner_type].append(wish)
+        self.update_wish_ui()
 
     def update_wish_ui(self):
         # TODO dont update ui, if it wasn't changed
