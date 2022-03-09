@@ -282,7 +282,7 @@ class WishImporter:
             wish.append(3)
         else:
             # add rarity (4 or 5) and trim item name
-            wish.append(wish[1][position+1])
+            wish.append(int(wish[1][position+1]))
             wish[1] = wish[1][:position-1]
         return wish
 
