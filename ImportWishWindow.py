@@ -20,7 +20,6 @@ class ImportWishDialog(QDialog):
     select_button = None
     accept_button = None
     exit_button = None
-    progress_label = None
     progress_bar = None
 
     reload_memory_wishes = pyqtSignal()
@@ -111,19 +110,12 @@ class ImportWishDialog(QDialog):
         self.accept_button.setMinimumSize(50, 50)
         content_layout.addWidget(self.accept_button)
 
-        progress_layout = QHBoxLayout()
-        self.progress_label = QLabel()
-        self.progress_label.setText("0/0")
-        progress_layout.addWidget(self.progress_label)
-
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setStyleSheet(
-            "QProgressBar { border: 0px solid grey; border-radius: 0px; background-color: rgb(130, 130, 130); text-align: center; }"
+            "QProgressBar { border: 0px solid grey; border-radius: 0px; background-color: rgb(130, 130, 130); color: rgb(255,255,255); text-align: center; }"
             "QProgressBar::chunk { background-color: rgb(30, 30, 30); border: 0px }")
-        self.progress_bar.setGeometry(0, 250, 250, 5)
-        self.progress_bar.setTextVisible(False)
-        progress_layout.addWidget(self.progress_bar)
-        content_layout.addLayout(progress_layout)
+        self.progress_bar.setGeometry(0, 250, 250, 10)  # x, y, width, height
+        content_layout.addWidget(self.progress_bar)
 
         content_frame = QFrame()
         content_frame.setLayout(content_layout)
@@ -138,10 +130,11 @@ class ImportWishDialog(QDialog):
         files = QFileDialog.getOpenFileNames(self, "Select one or more files to open", "C:", "Images (*.png *.jpg)")
         self.selected_files = files[0]
         self.number_label.setText("Selected {} images".format(len(self.selected_files)))
-        self.progress_label.setText("0/{}".format(len(self.selected_files)))
 
     def on_click_accept_button(self):
         # insert wishes to db using importer
+        self.progress_bar.setRange(0, len(self.selected_files))
+        self.progress_bar.setFormat("%v/{}".format(len(self.selected_files)))
         import_thread = threading.Thread(target=self.import_images_thread)
         import_thread.start()
         # lock ui
@@ -175,17 +168,15 @@ class ImportWishDialog(QDialog):
     def import_images_thread(self):
         wi = WishImporter(WishDatabase("db.db"))
         self.lock_ui()
-        self.progress_bar.setRange(0, len(self.selected_files))
 
         if self.banner_type not in ["wishCharacter", "wishWeapon", "wishStandard", "wishBeginner"]:
             logger.error("Wrong table name!")
             return
-        for count, img_path in enumerate(self.selected_files):
+        for count, img_path in enumerate(self.selected_files, start=1):
             wishes = wi.get_wishes_from_imagev2(img_path)
             wi.insert_to_db(wishes, self.banner_type)
             self.insert_wishes_to_memory.emit(wishes, self.banner_type)
-            self.progress_bar.setValue(count+1)
-            self.progress_label.setText("{}/{}".format(count+1, len(self.selected_files)))
+            self.progress_bar.setValue(count)
         self.unlock_ui()
 
     def lock_ui(self):
