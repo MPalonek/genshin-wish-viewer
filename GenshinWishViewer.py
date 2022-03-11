@@ -73,8 +73,8 @@ class Ui(QtWidgets.QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
 
-        w = SplashScreen()
-        w.show()
+        splash_w = SplashScreen()
+        splash_w.show()
         uic.loadUi('mainwindow.ui', self)
 
         self.db = WishDatabase('db.db')
@@ -82,7 +82,7 @@ class Ui(QtWidgets.QMainWindow):
         self.load_wishes_to_memory_from_db()
 
         self.setup_ui()
-        w.close()
+        splash_w.close()
         self.show()
 
     def setup_ui(self):
@@ -424,29 +424,60 @@ class Ui(QtWidgets.QMainWindow):
         # someone could give wrong banner_type
         for wish in wishes:
             self.wish_entries[banner_type].append(wish)
-        self.update_wish_ui()
+        self.update_wish_ui(banner_type)
 
-    def update_wish_ui(self):
-        # TODO dont update ui, if it wasn't changed
+    def update_character_wish_ui(self):
         self.characterBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishCharacter'])))  # lifetime pulls
-        self.characterBannerLabel_2_1_2.setText("{:,}".format(len(self.wish_entries['wishCharacter']) * 160).replace(',', ' '))  # primo
-        self.characterBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishCharacter'], 5)))  # 5* pity
-        self.characterBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishCharacter'], 4)))  # 4* pity
+        self.characterBannerLabel_2_1_2.setText(
+            "{:,}".format(len(self.wish_entries['wishCharacter']) * 160).replace(',', ' '))  # primo
+        self.characterBannerLabel_3_3.setText(
+            "{}".format(self.get_pity_number(self.wish_entries['wishCharacter'], 5)))  # 5* pity
+        self.characterBannerLabel_4_3.setText(
+            "{}".format(self.get_pity_number(self.wish_entries['wishCharacter'], 4)))  # 4* pity
 
+    def update_weapon_wish_ui(self):
         self.weaponBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishWeapon'])))  # lifetime pulls
-        self.weaponBannerLabel_2_1_2.setText("{:,}".format(len(self.wish_entries['wishWeapon']) * 160).replace(',', ' '))  # primo
-        self.weaponBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishWeapon'], 5)))  # 5* pity
-        self.weaponBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishWeapon'], 4)))  # 4* pity
+        self.weaponBannerLabel_2_1_2.setText(
+            "{:,}".format(len(self.wish_entries['wishWeapon']) * 160).replace(',', ' '))  # primo
+        self.weaponBannerLabel_3_3.setText(
+            "{}".format(self.get_pity_number(self.wish_entries['wishWeapon'], 5)))  # 5* pity
+        self.weaponBannerLabel_4_3.setText(
+            "{}".format(self.get_pity_number(self.wish_entries['wishWeapon'], 4)))  # 4* pity
 
+    def update_standard_wish_ui(self):
         self.standardBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishStandard'])))  # lifetime pulls
-        self.standardBannerLabel_2_1_2.setText("{:,}".format(len(self.wish_entries['wishStandard']) * 160).replace(',', ' '))  # primo
-        self.standardBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishStandard'], 5)))  # 5* pity
-        self.standardBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishStandard'], 4)))  # 4* pity
+        self.standardBannerLabel_2_1_2.setText(
+            "{:,}".format(len(self.wish_entries['wishStandard']) * 160).replace(',', ' '))  # primo
+        self.standardBannerLabel_3_3.setText(
+            "{}".format(self.get_pity_number(self.wish_entries['wishStandard'], 5)))  # 5* pity
+        self.standardBannerLabel_4_3.setText(
+            "{}".format(self.get_pity_number(self.wish_entries['wishStandard'], 4)))  # 4* pity
 
+    def update_beginner_wish_ui(self):
         self.beginnerBannerLabel_2_3.setText("{}".format(len(self.wish_entries['wishBeginner'])))  # lifetime pulls
-        self.beginnerBannerLabel_2_1_2.setText("{:,}".format(len(self.wish_entries['wishBeginner']) * 160).replace(',', ' '))  # primo
-        self.beginnerBannerLabel_3_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishBeginner'], 5)))  # 5* pity
-        self.beginnerBannerLabel_4_3.setText("{}".format(self.get_pity_number(self.wish_entries['wishBeginner'], 4)))  # 4* pity
+        self.beginnerBannerLabel_2_1_2.setText(
+            "{:,}".format(len(self.wish_entries['wishBeginner']) * 160).replace(',', ' '))  # primo
+        self.beginnerBannerLabel_3_3.setText(
+            "{}".format(self.get_pity_number(self.wish_entries['wishBeginner'], 5)))  # 5* pity
+        self.beginnerBannerLabel_4_3.setText(
+            "{}".format(self.get_pity_number(self.wish_entries['wishBeginner'], 4)))  # 4* pity
+
+    def update_wish_ui(self, to_update=None):
+        # TODO dont update ui, if it wasn't changed
+        if to_update is None:
+            self.update_character_wish_ui()
+            self.update_weapon_wish_ui()
+            self.update_standard_wish_ui()
+            self.update_beginner_wish_ui()
+
+        elif to_update == 'wishCharacter':
+            self.update_character_wish_ui()
+        elif to_update == 'wishWeapon':
+            self.update_weapon_wish_ui()
+        elif to_update == 'wishStandard':
+            self.update_standard_wish_ui()
+        elif to_update == 'wishBeginner':
+            self.update_beginner_wish_ui()
 
     def get_pity_number(self, wish_list, rarity):
         # if wish_list is empty

@@ -1,13 +1,10 @@
-from PyQt5 import QtWidgets, uic
-from PyQt5.QtGui import QIcon, QPalette, QColor, QPixmap, QBitmap, QPainter
-from PyQt5.QtCore import Qt, QSize, QEvent, QTimer, QRect, QMetaObject, QPoint, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QPushButton, QFrame, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QSizePolicy, QSizeGrip, QPushButton, QLabel, QDialog, QFileDialog
-from PyQt5.QtWidgets import QProgressBar
+from PyQt5.QtGui import QIcon, QColor, QBitmap, QPainter
+from PyQt5.QtCore import Qt, QRect, QPoint, pyqtSignal
+from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QSizePolicy, QProgressBar, QPushButton, QLabel, QDialog, QFileDialog
 from importer import WishImporter
 from database import WishDatabase
 import threading
 import logging
-import sys
 
 logger = logging.getLogger('GenshinWishViewer')
 
@@ -32,7 +29,7 @@ class ImportWishDialog(QDialog):
         self.setup_ui_logic()
 
     def setup_ui(self):
-        self.setMinimumSize(250, 255)
+        self.setMinimumSize(250, 275)
         # self.setMaximumSize(300, 300)
         # self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.setWindowTitle("Adding {}...".format(self.banner_type))
@@ -112,8 +109,8 @@ class ImportWishDialog(QDialog):
 
         self.progress_bar = QProgressBar(self)
         self.progress_bar.setStyleSheet(
-            "QProgressBar { border: 0px solid grey; border-radius: 0px; background-color: rgb(130, 130, 130); color: rgb(255,255,255); text-align: center; }"
-            "QProgressBar::chunk { background-color: rgb(30, 30, 30); border: 0px }")
+            "QProgressBar { border: 0px solid grey; border-radius: 5px; background-color: rgb(130, 130, 130); color: rgb(255,255,255); text-align: center; }"
+            "QProgressBar::chunk { background-color: rgb(30, 30, 30); border: 0px; border-radius: 5px; }")
         self.progress_bar.setGeometry(0, 250, 250, 10)  # x, y, width, height
         content_layout.addWidget(self.progress_bar)
 
@@ -130,22 +127,19 @@ class ImportWishDialog(QDialog):
         files = QFileDialog.getOpenFileNames(self, "Select one or more files to open", "C:", "Images (*.png *.jpg)")
         self.selected_files = files[0]
         self.number_label.setText("Selected {} images".format(len(self.selected_files)))
+        self.progress_bar.setValue(0)
+        if self.selected_files:
+            self.progress_bar.setRange(0, len(self.selected_files))
+            self.progress_bar.setFormat("%v/{}".format(len(self.selected_files)))
+        else:
+            self.progress_bar.setFormat("")
 
     def on_click_accept_button(self):
         # insert wishes to db using importer
-        self.progress_bar.setRange(0, len(self.selected_files))
-        self.progress_bar.setFormat("%v/{}".format(len(self.selected_files)))
         import_thread = threading.Thread(target=self.import_images_thread)
         import_thread.start()
-        # lock ui
-        # progress bar
-        # if successful then emit signal
-        # self.inserted_new_wishes.emit()
-        # import_thread.join()
-        # self.close()
 
     def on_click_exit_button(self):
-        # self.reload_memory_wishes.emit()
         # handle closing while we are still doing work...
         self.close()
 
@@ -178,6 +172,7 @@ class ImportWishDialog(QDialog):
             self.insert_wishes_to_memory.emit(wishes, self.banner_type)
             self.progress_bar.setValue(count)
         self.unlock_ui()
+        self.progress_bar.setFormat("Done")
 
     def lock_ui(self):
         self.select_button.setDisabled(True)

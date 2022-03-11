@@ -12,7 +12,7 @@ class SplashScreen(QSplashScreen):
     def __init__(self):
         self.get_random_background_image()
         QSplashScreen.__init__(self, self.background_img)
-        self.add_progress_bar()
+        # self.add_progress_bar()
 
     def get_random_background_image(self):
         #  TODO roll it
